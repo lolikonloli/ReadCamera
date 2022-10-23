@@ -6,13 +6,11 @@ import cv2
 
 class Camera():
     def __init__(self):
-        #从文件中加载UI定义
         qfile_states = QFile("./UI/main.ui")
         qfile_states.open(QFile.ReadOnly)
         qfile_states.close()
         self.ui = QUiLoader().load(qfile_states)   
 
-        #信号槽连接
         self.ui.btn_connect_camera.clicked.connect(self.camera_init)
         self.camera_timer = QTimer()
         self.camera_timer.timeout.connect(self.read_img)
