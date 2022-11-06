@@ -4,6 +4,8 @@ from PySide2.QtCore import QFile, QTimer
 from PySide2.QtGui import QImage, QPixmap
 import cv2
 
+from .modules/predicter/predicter import Predicter
+
 class Camera():
     def __init__(self):
         qfile_states = QFile("./UI/main.ui")
@@ -15,6 +17,8 @@ class Camera():
         self.camera_timer = QTimer()
         self.camera_timer.timeout.connect(self.read_img)
 
+        self.predicter = Predicter()
+
     def camera_init(self):
         self.cap = cv2.VideoCapture(0)
         self.camera_timer.start(30)
@@ -23,7 +27,8 @@ class Camera():
         ret, img = self.cap.read()
         if ret:
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            qimg = QImage(img, img.shape[1], img.shape[0], img.strides[0], QImage.Format_RGB888)
+            result = self.predicter.inference(img)
+            qimg = QImage(result, result.shape[1], result.shape[0], result.strides[0], QImage.Format_RGB888)
             self.ui.lb_img.setPixmap(QPixmap.fromImage(qimg))
 
 if __name__ == '__main__':
